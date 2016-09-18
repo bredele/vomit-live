@@ -1,0 +1,25 @@
+{
+  "name": "vomit-live",
+  "version": "1.0.0",
+  "description": "Vomit live component",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bredele/vomit-live.git"
+  },
+  "keywords": [
+    "vomit",
+    "component",
+    "live",
+    "reload"
+  ],
+  "author": "Olivier Wietrich",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bredele/vomit-live/issues"
+  },
+  "homepage": "https://github.com/bredele/vomit-live#readme"
+}
