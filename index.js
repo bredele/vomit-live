@@ -6,7 +6,23 @@ var vomit = require('vomit')
 var http = require('http')
 var fs = require('fs')
 var browserify = require('browserify')
+var watchify = require('watchify')
+var chokidar = require('chokidar')
 var name = require('path').basename
+
+
+/**
+ * Main component watcher
+ */
+
+var watcher = chokidar.watch(null, {
+  ignored: /[\/\\]\./,
+  persistent: true
+})
+
+watcher.on('change', (path, stats) => {
+  process.emit('vomit', 'css')
+})
 
 
 /**
@@ -30,7 +46,7 @@ process.stdin.on( 'data', key => {
 module.exports = function(directory, port) {
   var component = name(directory)
   http.createServer((req, res) => {
-    switch(req.url) {
+    switch(req.url.split('?')[0]) {
       case '/':
         res.writeHead(200, {'Content-Type': 'text/html'})
         html(component).pipe(res)
@@ -49,7 +65,10 @@ module.exports = function(directory, port) {
         bundle(component, directory).pipe(res)
         break
       case '/bundle.css':
-        res.end()
+      res.writeHead(200, {'Content-Type': 'text/css'})
+        var file = directory + '/' + component + '.css'
+        watcher.add(file);
+        fs.createReadStream(file).pipe(res)
         break
       default:
         res.end()
@@ -92,7 +111,14 @@ function html(title, component) {
  */
 
 function bundle(name, directory) {
-  return browserify()
+  return browserify({
+      cache: {},
+      packageCache: {},
+      plugin: [watchify]
+    })
+    .on('update', function() {
+      process.emit('vomit', 'reload')
+    })
     .require(__dirname + '/live.js', {
       expose : 'vomit-live'
     })

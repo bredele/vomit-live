@@ -24,7 +24,9 @@
   "homepage": "https://github.com/bredele/vomit-live#readme",
   "dependencies": {
     "browserify": "^13.1.0",
+    "chokidar": "^1.6.0",
     "sse": "0.0.6",
-    "vomit": "github:bredele/vomit"
+    "vomit": "github:bredele/vomit",
+    "watchify": "^3.7.0"
   }
 }

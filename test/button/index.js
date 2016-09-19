@@ -11,5 +11,5 @@ var vomit = require('vomit')
  */
 
 module.exports = function(data) {
-  return vomit`<button>${data}</button>`
+  return vomit`<button>Hello ${data}</button>`
 }

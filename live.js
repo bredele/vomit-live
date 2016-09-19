@@ -21,6 +21,7 @@ module.exports = function(component) {
   sse('/events', function(type, data) {
     if(type.indexOf('reload') > -1) reload()
     if(type.indexOf('update') > -1) update(cb, data)
+    if(type.indexOf('css') > -1) styles()
   });
 }
 
@@ -47,6 +48,19 @@ function update(component, data) {
 function reload() {
   window.location.reload();
 }
+
+
+/**
+ * Reload page
+ *
+ * @api private
+ */
+
+function styles() {
+  var link = document.querySelector('[href^="bundle.css"]')
+  link.setAttribute('href', 'bundle.css?' + Math.random().toString(36).substring(0, 6))
+}
+
 
 
 /**
