@@ -21,7 +21,16 @@ var watcher = chokidar.watch(null, {
 })
 
 watcher.on('change', (path, stats) => {
-  process.emit('vomit', 'css')
+  if(name(path) == 'vomit.json') {
+    try {
+      fs.readFile(path, (err, data) => {
+        process.emit('vomit', 'update', JSON.parse(data.toString()))
+      })
+    } catch(e) {
+      // log error correctly
+      console.log(e)
+    }
+  } else process.emit('vomit', 'css')
 })
 
 
@@ -45,6 +54,8 @@ process.stdin.on( 'data', key => {
 
 module.exports = function(directory, port) {
   var component = name(directory)
+  // vomit.json should be configurable
+  watcher.add(directory + '/vomit.json');
   http.createServer((req, res) => {
     switch(req.url.split('?')[0]) {
       case '/':

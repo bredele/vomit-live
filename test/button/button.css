@@ -1,5 +1,10 @@
 button {
   background: whitesmoke;
-  border: 1px solid #ccc;
+  border: 1px solid green;
   padding: 10px 16px;
+}
+
+
+[aria-hidden="true"] {
+  display: none;
 }
