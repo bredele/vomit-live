@@ -4,7 +4,7 @@
   "description": "Vomit live component",
   "main": "index.js",
   "scripts": {
-    "test": ""
+    "test": "node test/test.js"
   },
   "repository": {
     "type": "git",

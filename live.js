@@ -2,7 +2,6 @@
  * Vomit live dependencies.
  */
 
-var sse = require('sse');
 var vomit = require('vomit')
 
 
@@ -18,7 +17,9 @@ var vomit = require('vomit')
 
 module.exports = function(component) {
   var cb = vomit(component)
+  document.body.appendChild(cb())
   sse('/events', function(data) {
+    cb(data)
     if(data == 'reload') reload()
     if(data == 'update') update(cb, data)
   });
@@ -46,4 +47,17 @@ function update(component, data) {
 
 function reload() {
   window.location.reload();
+}
+
+
+/**
+ *
+ */
+
+function sse(topic, cb) {
+  var source = new EventSource(topic);
+  source.onmessage = function(event) {
+    console.log(event)
+    cb(event.data)
+  };
 }

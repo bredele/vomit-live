@@ -1,0 +1,9 @@
+{
+  "name": "button",
+  "version": "1.0.0",
+  "description": "Button test component",
+  "main": "index.js",
+  "dependencies": {
+    "vomit": "github:bredele/vomit"
+  }
+}

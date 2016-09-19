@@ -6,6 +6,7 @@ var vomit = require('vomit')
 var http = require('http')
 var fs = require('fs')
 var browserify = require('browserify')
+var name = require('path').basename
 
 
 /**
@@ -17,22 +18,30 @@ var browserify = require('browserify')
  */
 
 module.exports = function(directory, port) {
+  var component = name(directory)
   http.createServer((req, res) => {
     switch(req.url) {
       case '/':
         res.writeHead(200, {'Content-Type': 'text/html'})
-        html('test', '<button>hello</button>').pipe(res)
+        html(component).pipe(res)
         break
       case '/events':
-        res.writeHead(200, {'Content-Type': 'text/event-stream' });
-        //res.write('data: ' + Date.now() + '\n\n');
+        res.writeHead(200, {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive'
+        });
+
+        res.write('data: foo\n\n');
+        setTimeout(function(){
+          res.write('data: bar\n\n');
+          setTimeout(function(){
+            res.end('data: quit\n\n');
+          }, 1000);
+        }, 1000);
         break
       case '/bundle.js':
-        browserify()
-          .add(__dirname + '/live.js')
-          .require(directory)
-          .bundle()
-          .pipe(res)
+        bundle(component, directory).pipe(res)
         break
       case '/bundle.css':
         res.end()
@@ -67,4 +76,40 @@ function html(title, component) {
     </body>
   </html>
   `
+}
+
+
+/**
+ * Bundle component.
+ *
+ * @param {String} directory
+ * @api private
+ */
+
+function bundle(name, directory) {
+  return browserify()
+    .require(__dirname + '/live.js', {
+      expose : 'vomit-live'
+    })
+    .require(directory, {
+      expose: name
+    })
+    .bundle()
+}
+
+
+/**
+ * Stringify data with type.
+ *
+ * @param {String} type
+ * @param {Any} data
+ * @return {String} json
+ * @api private
+ */
+
+function stringify(type, data) {
+  return JSON.stringify({
+    type: type,
+    data: data
+  })
 }
