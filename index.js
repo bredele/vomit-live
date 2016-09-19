@@ -4,21 +4,44 @@
 
 var vomit = require('vomit')
 var http = require('http')
+var fs = require('fs')
+var browserify = require('browserify')
 
 
 /**
- * Create web server.
+ * Create vomit live serer with given vomit component.
+ *
+ * @param {String} directory
+ * @param {Number} port
+ * @api public
  */
 
-http.createServer((req, res) => {
-  if(req.url == '/events') {
-    res.writeHead(200, {'Content-Type': 'text/event-stream' });
-    //res.write('data: ' + Date.now() + '\n\n');
-  } else {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    html('test').pipe(res)
-  }
-}).listen(3000)
+module.exports = function(directory, port) {
+  http.createServer((req, res) => {
+    switch(req.url) {
+      case '/':
+        res.writeHead(200, {'Content-Type': 'text/html'})
+        html('test', '<button>hello</button>').pipe(res)
+        break
+      case '/events':
+        res.writeHead(200, {'Content-Type': 'text/event-stream' });
+        //res.write('data: ' + Date.now() + '\n\n');
+        break
+      case '/bundle.js':
+        browserify()
+          .add(__dirname + '/live.js')
+          .require(directory)
+          .bundle()
+          .pipe(res)
+        break
+      case '/bundle.css':
+        res.end()
+        break
+      default:
+        res.end()
+    }
+  }).listen(port || 3000)
+}
 
 
 /**
@@ -35,12 +58,12 @@ function html(title, component) {
     <head>
       <meta charset="utf-8">
       <title>${title}</title>
-      <link rel="stylesheet" href="vomit-live.css">
-      <link rel="stylesheet" href="${title}.css">
+      <link rel="stylesheet" href="bundle.css">
     </head>
     <body>
     ${component}
     <script src="bundle.js"></script>
+    <script>require('vomit-live')(require('${title}'))</script>
     </body>
   </html>
   `
