@@ -10,6 +10,16 @@ var name = require('path').basename
 
 
 /**
+ * Listen stdin
+ */
+
+process.setMaxListeners(Infinity)
+process.stdin.on( 'data', key => {
+  process.emit('vomit', key.toString())
+});
+
+
+/**
  * Create vomit live serer with given vomit component.
  *
  * @param {String} directory
@@ -31,14 +41,9 @@ module.exports = function(directory, port) {
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive'
         });
-
-        res.write('data: foo\n\n');
-        setTimeout(function(){
-          res.write('data: bar\n\n');
-          setTimeout(function(){
-            res.end('data: quit\n\n');
-          }, 1000);
-        }, 1000);
+        process.on('vomit', (type, data) => {
+          res.write('data: ' + stringify(type, data)+ '\n\n')
+        })
         break
       case '/bundle.js':
         bundle(component, directory).pipe(res)

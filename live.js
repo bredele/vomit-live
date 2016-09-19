@@ -18,10 +18,9 @@ var vomit = require('vomit')
 module.exports = function(component) {
   var cb = vomit(component)
   document.body.appendChild(cb())
-  sse('/events', function(data) {
-    cb(data)
-    if(data == 'reload') reload()
-    if(data == 'update') update(cb, data)
+  sse('/events', function(type, data) {
+    if(type.indexOf('reload') > -1) reload()
+    if(type.indexOf('update') > -1) update(cb, data)
   });
 }
 
@@ -51,13 +50,17 @@ function reload() {
 
 
 /**
+ * Listen server events.
  *
+ * @param {String} topic
+ * @param {Function} cb
+ * @api private
  */
 
 function sse(topic, cb) {
   var source = new EventSource(topic);
   source.onmessage = function(event) {
-    console.log(event)
-    cb(event.data)
+    var obj = JSON.parse(event.data)
+    cb(obj.type, obj.data)
   };
 }
