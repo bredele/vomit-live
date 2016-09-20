@@ -6,6 +6,9 @@
   "scripts": {
     "test": "node test/test.js"
   },
+  "bin": {
+    "vomit-live": "bin/vomit-live"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bredele/vomit-live.git"
