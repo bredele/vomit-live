@@ -1,9 +1,11 @@
+
 button {
   background: whitesmoke;
-  border: 1px solid green;
+  border: 2px solid black;
+  box-shadow: 0px 0px 6px #ccc;
   padding: 10px 16px;
+  cursor: pointer;
 }
-
 
 [aria-hidden="true"] {
   display: none;

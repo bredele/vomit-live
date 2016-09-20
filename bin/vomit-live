@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+/**
+ * Command dependencies.
+ */
+
+var live = require('..')
+var resolve = require('path').resolve
+
+
+/**
+ * Path given as argument
+ */
+
+var path = process.argv.slice(2)[0]
+
+
+/**
+ * Create dev server
+ */
+
+live(resolve(__dirname, path), 3000)
