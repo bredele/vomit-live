@@ -1,28 +1,44 @@
-
 /**
- * Button dependencies.
+ * Component dependencies.
  */
 
-var vomit = require('vomit')
+ var vomit = require('vomit')
+
+ /**
+  * Expose olivier component
+  *
+  * @param {Object} data
+  * @api public
+  */
+
+ module.exports = function(data) {
+   var rainbow = vomit(list)
+
+  var arr = data.rainbow
+  setInterval(function() {
+    var random = Math.floor(Math.random() * arr.length) + 1
+    rainbow(arr.slice(0, random), data.expanded)
+  }, 500)
 
 
-/**
- * Expose 'button'
- */
-
-module.exports = function(data) {
-  var label = ''
-  var expanded = false
-  var content = ''
-  if(data) {
-    label = data.label
-    expanded = data.expanded
-    content = data.content
-  }
-  return element(label, content, expanded)
-}
+  return vomit`<div>
+    <button>${data.label}</button>
+    ${rainbow(arr)}
+  </div>`
+ }
 
 
-function element(label, content, expanded) {
-  return vomit`<div><button aria-expanded="${expanded}">${label}</button><p aria-hidden="${!expanded}">${content}</p></div>`
-}
+ /**
+  * List component.
+  *
+  * @param {Array} arr
+  * @param {Element}
+  */
+
+ function list(arr, bool) {
+   return vomit`
+     <ul aria-hidden="${!bool}">${arr.map(item => {
+       return vomit`<li style="background:${item};">${item}</li>`
+     })}</ul>
+   `
+ }

@@ -17,7 +17,8 @@ var vomit = require('vomit')
 
 module.exports = function(component) {
   var cb = vomit(component)
-  document.body.appendChild(cb())
+  var data = JSON.parse(document.querySelector('#component-data').innerHTML)
+  document.body.appendChild(cb(data))
   sse('/events', function(type, data) {
     if(type.indexOf('reload') > -1) reload()
     if(type.indexOf('update') > -1) update(cb, data)

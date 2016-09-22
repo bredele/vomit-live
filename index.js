@@ -60,7 +60,7 @@ module.exports = function(directory, port) {
     switch(req.url.split('?')[0]) {
       case '/':
         res.writeHead(200, {'Content-Type': 'text/html'})
-        html(component).pipe(res)
+        html(component, directory).pipe(res)
         break
       case '/events':
         res.writeHead(200, {
@@ -95,7 +95,7 @@ module.exports = function(directory, port) {
  * @api private
  */
 
-function html(title, component) {
+function html(title, path) {
   return vomit`
   <!DOCTYPE html>
   <html>
@@ -105,7 +105,7 @@ function html(title, component) {
       <link rel="stylesheet" href="bundle.css">
     </head>
     <body>
-    ${component}
+    <script type="application/json" id="component-data">${fs.createReadStream(path + '/vomit.json')}</script>
     <script src="bundle.js"></script>
     <script>require('vomit-live')(require('${title}'))</script>
     </body>
